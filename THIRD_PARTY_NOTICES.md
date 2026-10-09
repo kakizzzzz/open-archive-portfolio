@@ -4,7 +4,7 @@ The project license applies to the template's original code and placeholder SVGs
 
 ## Computer-screen video
 
-The computer-screen video is an original work by KAKI (kakizzzzz), released with this template under its MIT license. Its extracted poster is covered by the same license. The web version removes the source's blank black tail, is cropped to the screen and compressed as H.264, and forms a roughly 40-second forward-and-reverse loop without repeating the endpoint frames. Color is retained in the media; a grayscale overlay provides the monochrome appearance and a diffuse color reveal around the pointer. No third-party stock video is included.
+The computer-screen video is an original work by KAKI (kakizzzzz), released with this template under its MIT license. Its extracted poster is covered by the same license. The web version removes the source's blank black tail, is cropped to the screen and compressed as H.264, and forms a roughly 40-second forward-and-reverse loop without repeating the endpoint frames. Color is retained in the media; a single GPU pass provides the monochrome appearance and a diffuse color reveal around the pointer, with native monochrome playback as the fallback. No third-party stock video is included.
 
 ## Runtime software
 

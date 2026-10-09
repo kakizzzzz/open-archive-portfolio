@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
 import { introMedia, templateProfile } from './content';
+import { createScreenVideoRenderer, type ScreenVideoRenderer } from './screenVideoRenderer';
 
 type ComputerIntroProps = {
   onEnter: (rect: DOMRect) => void;
@@ -13,92 +14,108 @@ type ComputerIntroProps = {
 export default function ComputerIntro({ onEnter, width: computerWidth, scale, loadingProgress, playVideo, reducedMotion }: ComputerIntroProps) {
   const screenRef = useRef<HTMLButtonElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const revealFrameRef = useRef<number | null>(null);
-  const revealPointRef = useRef({ x: 50, y: 50 });
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const rendererRef = useRef<ScreenVideoRenderer | null>(null);
+  const revealPointRef = useRef({ x: 0.5, y: 0.5 });
+  const screenRectRef = useRef<DOMRect | null>(null);
+  const hoverAllowedRef = useRef(false);
   const pointerInsideRef = useRef(false);
   const keyboardFocusRef = useRef(false);
   const [playbackFailed, setPlaybackFailed] = useState(false);
-
-  const cancelRevealFrame = () => {
-    if (revealFrameRef.current !== null) {
-      cancelAnimationFrame(revealFrameRef.current);
-      revealFrameRef.current = null;
-    }
-  };
-
-  const paintRevealPoint = () => {
-    const screen = screenRef.current;
-    if (!screen) return;
-    screen.style.setProperty('--screen-pointer-x', `${revealPointRef.current.x}%`);
-    screen.style.setProperty('--screen-pointer-y', `${revealPointRef.current.y}%`);
-  };
+  const [hoverCapable, setHoverCapable] = useState(false);
+  const [screenOn, setScreenOn] = useState(true);
+  const videoEnabled = playVideo && screenOn;
 
   const syncReveal = () => {
-    const screen = screenRef.current;
-    if (!screen) return;
     if (!pointerInsideRef.current && keyboardFocusRef.current) {
-      cancelRevealFrame();
-      revealPointRef.current = { x: 50, y: 50 };
-      paintRevealPoint();
+      revealPointRef.current = { x: 0.5, y: 0.5 };
     }
-    screen.dataset.colorReveal = String(pointerInsideRef.current || keyboardFocusRef.current);
+    rendererRef.current?.setReveal(
+      revealPointRef.current.x,
+      revealPointRef.current.y,
+      pointerInsideRef.current || keyboardFocusRef.current,
+    );
   };
 
   const moveReveal = (event: PointerEvent<HTMLButtonElement>) => {
-    if (event.pointerType !== 'mouse' || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-    const rect = event.currentTarget.getBoundingClientRect();
+    if (event.pointerType !== 'mouse' || !hoverAllowedRef.current) return;
+    const rect = screenRectRef.current ?? event.currentTarget.getBoundingClientRect();
+    screenRectRef.current = rect;
     if (!rect.width || !rect.height) return;
     revealPointRef.current = {
-      x: Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)),
-      y: Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100)),
+      x: Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)),
+      y: Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height)),
     };
-    if (!pointerInsideRef.current) {
-      pointerInsideRef.current = true;
-      paintRevealPoint();
-      syncReveal();
-    }
-    if (revealFrameRef.current === null) {
-      revealFrameRef.current = requestAnimationFrame(() => {
-        revealFrameRef.current = null;
-        paintRevealPoint();
-      });
-    }
+    pointerInsideRef.current = true;
+    syncReveal();
   };
 
   useEffect(() => {
+    const pointerQuery = window.matchMedia('(hover: hover) and (pointer: fine)');
     const clearPointerReveal = () => {
-      cancelRevealFrame();
       pointerInsideRef.current = false;
+      screenRectRef.current = null;
       syncReveal();
     };
+    const updatePointerMode = () => {
+      hoverAllowedRef.current = pointerQuery.matches;
+      setHoverCapable(pointerQuery.matches);
+      if (!pointerQuery.matches) clearPointerReveal();
+    };
+    const invalidateRect = () => { screenRectRef.current = null; };
     const onVisibilityChange = () => {
       if (document.hidden) clearPointerReveal();
     };
+    updatePointerMode();
+    pointerQuery.addEventListener('change', updatePointerMode);
+    window.addEventListener('resize', invalidateRect);
     window.addEventListener('blur', clearPointerReveal);
     document.addEventListener('visibilitychange', onVisibilityChange);
     return () => {
-      cancelRevealFrame();
+      pointerQuery.removeEventListener('change', updatePointerMode);
+      window.removeEventListener('resize', invalidateRect);
       window.removeEventListener('blur', clearPointerReveal);
       document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, []);
 
+  useEffect(() => { screenRectRef.current = null; }, [computerWidth, scale]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const video = videoRef.current;
+    const screen = screenRef.current;
+    if (!canvas || !video || !screen || reducedMotion || !hoverCapable || !introMedia.src) return;
+    const renderer = createScreenVideoRenderer(canvas, video, ready => {
+      screen.dataset.gpuReady = String(ready);
+    });
+    rendererRef.current = renderer;
+    renderer?.setEnabled(videoEnabled);
+    syncReveal();
+    return () => {
+      renderer?.dispose();
+      rendererRef.current = null;
+      delete screen.dataset.gpuReady;
+    };
+  }, [reducedMotion, hoverCapable, introMedia.src]);
+
   useEffect(() => {
     // A scroll can hide the screen without sending a pointer-leave event.
-    if (!playVideo) {
-      cancelRevealFrame();
+    if (!videoEnabled) {
       pointerInsideRef.current = false;
       keyboardFocusRef.current = false;
-      if (screenRef.current) screenRef.current.dataset.colorReveal = 'false';
+      screenRectRef.current = null;
+      syncReveal();
     }
-  }, [playVideo]);
+    rendererRef.current?.setEnabled(videoEnabled && !reducedMotion);
+  }, [videoEnabled, reducedMotion, hoverCapable]);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     let active = true;
     const syncPlayback = () => {
-      if (playVideo && !reducedMotion && !document.hidden) {
+      if (videoEnabled && !reducedMotion && !document.hidden) {
         video.muted = true;
         // Autoplay can be declined by the browser; keep the poster as a fallback.
         void video.play().catch((error: unknown) => {
@@ -114,7 +131,7 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
       video.pause();
       document.removeEventListener('visibilitychange', syncPlayback);
     };
-  }, [playVideo, reducedMotion, introMedia.src]);
+  }, [videoEnabled, reducedMotion, introMedia.src]);
 
   const openArchive = () => {
     if (screenRef.current) onEnter(screenRef.current.getBoundingClientRect());
@@ -154,9 +171,7 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
             </g>
             <rect x="205" y="385" width="6" height="2" rx="1" fill="#aaaaaa" />
             <rect x="218" y="385" width="6" height="2" rx="1" fill="#aaaaaa" />
-            <circle cx="568" cy="387" r="2" fill="#aaaaaa" />
-            <circle cx="590" cy="387" r="6" fill="#aaaaaa" />
-            <path d="M590 383.5v3m-2-1c-2.5 2.5-1 5.5 2 5.5s4.5-3 2-5.5" fill="none" stroke="#090909" strokeWidth="1" strokeLinecap="round" />
+            <circle cx="568" cy="387" r="2" fill={screenOn ? '#aaaaaa' : '#555555'} />
 
             {/* Front desktop case with a power key and a simple floppy slot. */}
             <rect x="127" y="454" width="28" height="30" rx="3" fill="#aaaaaa" />
@@ -177,18 +192,20 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
             ref={screenRef}
             className="archive-computer-screen"
             data-media={Boolean(introMedia.src || introMedia.poster)}
+            data-power={screenOn ? 'on' : 'off'}
+            disabled={!screenOn}
             type="button"
             onClick={openArchive}
             onPointerEnter={moveReveal}
             onPointerMove={moveReveal}
             onPointerLeave={() => {
-              cancelRevealFrame();
               pointerInsideRef.current = false;
+              screenRectRef.current = null;
               syncReveal();
             }}
             onPointerCancel={() => {
-              cancelRevealFrame();
               pointerInsideRef.current = false;
+              screenRectRef.current = null;
               syncReveal();
             }}
             onFocus={(event) => {
@@ -228,9 +245,8 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
                 onError={() => setPlaybackFailed(true)}
               />
             )}
-            {/* One decoder: the soft masked grayscale veil reveals the color beneath it. */}
-            <span className="archive-screen-monochrome-veil" aria-hidden="true" />
-            <span className="archive-screen-color-glow" aria-hidden="true" />
+            {/* One video texture; pointer changes only the lightweight shader uniforms. */}
+            <canvas ref={canvasRef} className="archive-screen-renderer" width={900} height={600} aria-hidden="true" />
             <span className="archive-screen-eyebrow">{templateProfile.brand} / SELECTED WORK</span>
             <span className="archive-screen-title">
               <span className="archive-screen-title-line">An open</span>
@@ -247,6 +263,20 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
               </span>
             </span>
             {loadingProgress !== null && <span className="archive-frame-loading" role="status" aria-label="Opening the archive"><span><i style={{ transform: `scaleX(${loadingProgress})` }} /></span></span>}
+          </button>
+          <button
+            className="archive-computer-power"
+            type="button"
+            aria-label="Screen power"
+            aria-pressed={screenOn}
+            title={screenOn ? 'Turn off the screen' : 'Turn on the screen'}
+            onClick={() => setScreenOn(on => !on)}
+            style={{ left: `${(590 / 740) * 100}%`, top: `${(387 / 550) * 100}%` }}
+          >
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <circle cx="8" cy="8" r="7" />
+              <path d="M8 3.5v4m-3-2a4 4 0 1 0 6 0" fill="none" stroke="#090909" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
           </button>
         </div>
       </div>
