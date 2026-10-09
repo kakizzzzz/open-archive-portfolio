@@ -2,6 +2,8 @@
 
 The project license applies to the template's original code and placeholder SVGs. Third-party software and fonts retain their own licenses and copyright notices.
 
+The sample computer-screen video and its extracted poster are demo media, excluded from the MIT grant. Replace them with your own licensed media before redistributing a customized copy.
+
 ## Runtime software
 
 | Component | License text |

@@ -155,7 +155,7 @@ export default function PortfolioTemplate() {
         <div className="archive-scroll-runway" style={{ height: timelineRunwayVh(galleryCount) / 100 * viewport.height }}>
           <div className="archive-pinned-stage" data-progress={t}>
             <div className="archive-computer-layer" style={{ opacity: reducedMotion ? sceneT < 0.1 ? 1 : 0 : frame.computerOpacity, pointerEvents: sceneT < 0.08 ? 'auto' : 'none', visibility: sceneT >= 0.13 ? 'hidden' : 'visible' }} aria-hidden={sceneT >= 0.13} inert={sceneT >= 0.08}>
-              <ComputerIntro width={layout.computerWidth} scale={reducedMotion ? 1 : frame.computerScale} loadingProgress={sceneT > 0.01 && sceneT < 0.12 ? Math.min(1, sceneT / 0.12) : null} onEnter={() => seek(progressForModule('about', galleryCount))} />
+              <ComputerIntro width={layout.computerWidth} scale={reducedMotion ? 1 : frame.computerScale} loadingProgress={sceneT > 0.01 && sceneT < 0.12 ? Math.min(1, sceneT / 0.12) : null} playVideo={sceneT < 0.13 && !isDetailOpen} reducedMotion={Boolean(reducedMotion)} onEnter={() => seek(progressForModule('about', galleryCount))} />
             </div>
             <div className="archive-intro-chrome" style={{ opacity: reducedMotion ? sceneT < 0.1 ? 1 : 0 : frame.computerOpacity, visibility: sceneT >= 0.13 ? 'hidden' : 'visible' }} aria-hidden={sceneT >= 0.13} inert={sceneT >= 0.08}>
               <IntroChrome onOpen={() => seek(progressForModule('about', galleryCount))} />

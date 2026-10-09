@@ -27,6 +27,12 @@ export const contactEmail = 'hello@example.com';
 export const contactPhone = '+00 000 000 0000';
 export const otherPortfolioUrl = templateProfile.website;
 
+// Set both fields to null for the original text-only computer screen.
+export const introMedia: { src: string | null; poster: string | null } = {
+  src: `${import.meta.env.BASE_URL}assets/template/intro-loop.mp4`,
+  poster: `${import.meta.env.BASE_URL}assets/template/intro-poster.jpg`,
+};
+
 export const reasons: Reason[] = [
   {
     id: '01',

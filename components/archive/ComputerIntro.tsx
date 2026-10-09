@@ -1,15 +1,37 @@
-import { useRef, type CSSProperties } from 'react';
-import { templateProfile } from './content';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { introMedia, templateProfile } from './content';
 
 type ComputerIntroProps = {
   onEnter: (rect: DOMRect) => void;
   width: number;
   scale: number;
   loadingProgress: number | null;
+  playVideo: boolean;
+  reducedMotion: boolean;
 };
 
-export default function ComputerIntro({ onEnter, width: computerWidth, scale, loadingProgress }: ComputerIntroProps) {
+export default function ComputerIntro({ onEnter, width: computerWidth, scale, loadingProgress, playVideo, reducedMotion }: ComputerIntroProps) {
   const screenRef = useRef<HTMLButtonElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [playbackFailed, setPlaybackFailed] = useState(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const syncPlayback = () => {
+      if (playVideo && !reducedMotion && !document.hidden) {
+        video.muted = true;
+        // Autoplay can be declined by the browser; keep the poster as a fallback.
+        void video.play().catch(() => setPlaybackFailed(true));
+      } else video.pause();
+    };
+    syncPlayback();
+    document.addEventListener('visibilitychange', syncPlayback);
+    return () => {
+      video.pause();
+      document.removeEventListener('visibilitychange', syncPlayback);
+    };
+  }, [playVideo, reducedMotion, introMedia.src]);
 
   const openArchive = () => {
     if (screenRef.current) onEnter(screenRef.current.getBoundingClientRect());
@@ -71,6 +93,7 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
           <button
             ref={screenRef}
             className="archive-computer-screen"
+            data-media={Boolean(introMedia.src || introMedia.poster)}
             type="button"
             onClick={openArchive}
             aria-label="Open the archive"
@@ -83,6 +106,25 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
               borderRadius: '6px',
             }}
           >
+            {introMedia.poster && <img className="archive-screen-media" src={introMedia.poster} alt="" aria-hidden="true" />}
+            {introMedia.src && !reducedMotion && (
+              <video
+                ref={videoRef}
+                className="archive-screen-media"
+                src={introMedia.src}
+                poster={introMedia.poster ?? undefined}
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                disablePictureInPicture
+                aria-hidden="true"
+                tabIndex={-1}
+                style={{ visibility: playbackFailed ? 'hidden' : 'visible' }}
+                onPlaying={() => setPlaybackFailed(false)}
+                onError={() => setPlaybackFailed(true)}
+              />
+            )}
             <span className="archive-screen-eyebrow">{templateProfile.brand} / SELECTED WORK</span>
             <span className="archive-screen-title">
               <span className="archive-screen-title-line">An open</span>

@@ -26,6 +26,10 @@ body.archive-page-open { background: #f3f3f3; color: #171717; overflow: hidden; 
 .archive-computer-illustration { width: 100%; height: 100%; display: block; }
 .archive-computer-screen { --screen-label-size: calc(11px * var(--computer-unit)); border: none; border-radius: 8px; padding: calc(28px * var(--computer-unit)) calc(34px * var(--computer-unit)); display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; overflow: clip; color: #fff; background: #171717; text-align: left; font-family: 'Archive Mono', 'SFMono-Regular', 'Menlo', 'Consolas', 'PingFang SC', monospace; }
 .archive-computer-screen:active { filter: brightness(.98); }
+.archive-screen-media { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; filter: grayscale(1); pointer-events: none; }
+.archive-computer-screen[data-media="true"]::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, #0009 0%, #0005 48%, #0002 100%); pointer-events: none; }
+.archive-screen-eyebrow, .archive-screen-title, .archive-screen-entry, .archive-frame-loading { z-index: 1; }
+.archive-screen-eyebrow, .archive-screen-title { position: relative; }
 .archive-screen-eyebrow { font: 400 var(--screen-label-size)/1.5 'Archive Mono', monospace; letter-spacing: calc(1.5px * var(--computer-unit)); color: #fff; margin-bottom: calc(20px * var(--computer-unit)); }
 .archive-screen-title { font-family: 'Archive Space', 'PingFang SC', 'Microsoft YaHei', sans-serif; font-size: calc(49px * var(--computer-unit)); line-height: 1.2; font-weight: 700; letter-spacing: calc(-1.4px * var(--computer-unit)); }
 .archive-screen-title-line { display: block; }

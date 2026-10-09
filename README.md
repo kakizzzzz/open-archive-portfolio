@@ -48,6 +48,16 @@ Start with `templateProfile`, `contactEmail`, `contactPhone`, and `templateResum
 
 建议先修改资料与联系方式。替换作品时，同时填写图片的真实宽高，长廊会按同一展示高度计算图片宽度。作品数量可增减，无需手动修改页码。
 
+### Computer-screen video
+
+Configure `introMedia.src` and `introMedia.poster` in `components/archive/content.ts`. Replace `public/assets/template/intro-loop.mp4` and `public/assets/template/intro-poster.jpg` with your own clip and still image. Both fields accept `null`; set both to `null` for a text-only screen.
+
+The video sits behind the title, cropped to the screen in black and white. It loops silently, pauses when the opening is hidden or the browser tab is in the background, and shows the static poster when reduced motion is enabled.
+
+在 `introMedia` 中配置视频与海报路径，替换上述文件即可。两个字段都可设为 `null`；全部置空后保留纯文字屏幕。视频在标题后方黑白裁剪、静音循环；离开开场或切到后台时暂停，减少动态效果模式下显示静态海报。
+
+The bundled screen clip and its poster are demo media outside the MIT grant. Replace them with your own licensed media when redistributing your copy. The template's MIT license does not automatically cover media you add. 示例屏幕视频及海报不包含在 MIT 授权中；分发自己的副本时，请替换为自己有权使用与发布的媒体。
+
 ## Publish with GitHub Pages
 
 1. Open your repository's **Settings → Pages**.
