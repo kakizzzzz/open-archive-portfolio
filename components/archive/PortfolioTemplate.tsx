@@ -7,7 +7,7 @@ import ArchiveDesk from './ArchiveDesk';
 import ArchiveDialog, { type ArchiveDetail } from './ArchiveDialog';
 import ScrollGallery from './ScrollGallery';
 import GalleryNotes from './GalleryNotes';
-import { sampleTimeline, progressForModule, progressForGalleryProgress, timelineRunwayVh, TIMELINE_STOPS, type ModuleId } from './timeline';
+import { sampleTimeline, sampleOpeningLayers, progressForModule, progressForGalleryProgress, timelineRunwayVh, TIMELINE_STOPS, type ModuleId } from './timeline';
 import { portfolioWorks, templateProfile } from './content';
 import { portfolioModules as modules } from './modules';
 import { getResponsiveLayout, sampleDeskLayout } from './layout';
@@ -32,6 +32,7 @@ export default function PortfolioTemplate() {
   const gallery = getGalleryLayout(viewport, portfolioWorks);
   const galleryFrame = sampleGalleryLayoutProgress(frame.galleryProgress, gallery);
   const sceneT = frame.sceneProgress;
+  const opening = sampleOpeningLayers(sceneT, Boolean(reducedMotion));
   const current = modules.find(item => item.id === frame.activeModule);
   const deskScene = reducedMotion && current
     ? TIMELINE_STOPS.find(stop => stop.activeModule === current.id)?.t ?? sceneT
@@ -60,7 +61,7 @@ export default function PortfolioTemplate() {
   const zoomScale = scale * cardZoom;
   const cardAnchorX = scale > 0 ? camera.x + (card.centerX - desk.center.x) / scale : camera.x;
   const cardAnchorY = scale > 0 ? camera.y + (card.centerY - desk.center.y) / scale : camera.y;
-  const galleryInteractive = expansion >= 1 - 1e-6;
+  const galleryInteractive = opening.archiveInteractive && expansion >= 1 - 1e-6;
   const chromeGray = Math.round(243 + 12 * expansion);
 
   useEffect(() => {
@@ -154,13 +155,13 @@ export default function PortfolioTemplate() {
       <main ref={track} className="archive-scroll-track" tabIndex={0} aria-label="Portfolio archive. Scroll to explore, select a note to read more.">
         <div className="archive-scroll-runway" style={{ height: timelineRunwayVh(galleryCount) / 100 * viewport.height }}>
           <div className="archive-pinned-stage" data-progress={t}>
-            <div className="archive-computer-layer" style={{ opacity: reducedMotion ? sceneT < 0.1 ? 1 : 0 : frame.computerOpacity, pointerEvents: sceneT < 0.08 ? 'auto' : 'none', visibility: sceneT >= 0.13 ? 'hidden' : 'visible' }} aria-hidden={sceneT >= 0.13} inert={sceneT >= 0.08}>
-              <ComputerIntro width={layout.computerWidth} scale={reducedMotion ? 1 : frame.computerScale} loadingProgress={sceneT > 0.01 && sceneT < 0.12 ? Math.min(1, sceneT / 0.12) : null} playVideo={sceneT < 0.13 && !isDetailOpen} reducedMotion={Boolean(reducedMotion)} onEnter={() => seek(progressForModule('about', galleryCount))} />
+            <div className="archive-computer-layer" style={{ opacity: opening.computerOpacity, pointerEvents: opening.computerInteractive ? 'auto' : 'none', visibility: opening.computerVisible ? 'visible' : 'hidden' }} aria-hidden={!opening.computerVisible} inert={!opening.computerInteractive}>
+              <ComputerIntro width={layout.computerWidth} scale={reducedMotion ? 1 : frame.computerScale} loadingProgress={sceneT > 0.01 && sceneT < 0.12 ? Math.min(1, sceneT / 0.12) : null} playVideo={opening.computerVisible && !isDetailOpen} reducedMotion={Boolean(reducedMotion)} onEnter={() => seek(progressForModule('about', galleryCount))} />
             </div>
-            <div className="archive-intro-chrome" style={{ opacity: reducedMotion ? sceneT < 0.1 ? 1 : 0 : frame.computerOpacity, visibility: sceneT >= 0.13 ? 'hidden' : 'visible' }} aria-hidden={sceneT >= 0.13} inert={sceneT >= 0.08}>
+            <div className="archive-intro-chrome" style={{ opacity: opening.computerOpacity, visibility: opening.computerVisible ? 'visible' : 'hidden' }} aria-hidden={!opening.computerVisible} inert={!opening.computerInteractive}>
               <IntroChrome onOpen={() => seek(progressForModule('about', galleryCount))} />
             </div>
-            <div className="archive-desk-layer" style={{ opacity: reducedMotion ? sceneT >= 0.1 ? 1 : 0 : frame.deskOpacity, pointerEvents: sceneT >= 0.12 && !galleryInteractive ? 'auto' : 'none' }} aria-hidden={sceneT < 0.12 || galleryInteractive} inert={sceneT < 0.12 || galleryInteractive}>
+            <div className="archive-desk-layer" style={{ opacity: opening.deskOpacity, visibility: opening.archiveVisible ? 'visible' : 'hidden', pointerEvents: opening.archiveInteractive && !galleryInteractive ? 'auto' : 'none' }} aria-hidden={!opening.archiveInteractive || galleryInteractive} inert={!opening.archiveInteractive || galleryInteractive}>
               <div className="archive-desk-camera" style={{
                 left: zoomThroughCard ? portal.centerX : desk.center.x,
                 top: zoomThroughCard ? portal.centerY : desk.center.y,
@@ -172,16 +173,16 @@ export default function PortfolioTemplate() {
               </div>
             </div>
             <div className="archive-gallery-layer" data-expansion={frame.galleryExpansion} style={{
-              opacity: reducedMotion ? Number(sceneT >= 0.1) : frame.deskOpacity,
-              visibility: sceneT >= 0.1 ? 'visible' : 'hidden',
-            }} aria-hidden={sceneT < 0.12} inert={sceneT < 0.12}>
+              opacity: opening.deskOpacity,
+              visibility: opening.archiveVisible ? 'visible' : 'hidden',
+            }} aria-hidden={!opening.archiveInteractive} inert={!opening.archiveInteractive}>
               <button className="archive-gallery-paper" data-module="works" type="button" onClick={() => seek(progressForModule('works', galleryCount))} aria-label={`Open chapter 05: ${galleryCount} selected images`} aria-hidden={galleryInteractive} inert={galleryInteractive} tabIndex={galleryInteractive ? -1 : 0} style={{
                 left: portal.centerX,
                 top: portal.centerY,
                 width: GALLERY_SOURCE_PAPER.width,
                 height: GALLERY_SOURCE_PAPER.height,
                 transform: `translate(-50%, -50%) rotate(${portal.rotation}deg) scale(${portal.paperScale})`,
-                pointerEvents: galleryInteractive ? 'none' : 'auto',
+                pointerEvents: opening.archiveInteractive && !galleryInteractive ? 'auto' : 'none',
               }} />
               <div className="archive-gallery-notes-paper" style={{
                 left: portal.centerX,
@@ -203,7 +204,7 @@ export default function PortfolioTemplate() {
                 <ScrollGallery layout={gallery} composition={galleryComposition} progress={frame.galleryProgress} reducedMotion={!!reducedMotion} onView={openWork} onSeek={seekImage} />
               </div>
             </div>
-            <div className="archive-archive-chrome" style={{ opacity: frame.deskOpacity, '--chrome-surface': `rgb(${chromeGray}, ${chromeGray}, ${chromeGray})` } as CSSProperties} aria-hidden={sceneT < 0.12} inert={sceneT < 0.12}>
+            <div className="archive-archive-chrome" style={{ opacity: opening.deskOpacity, visibility: opening.archiveVisible ? 'visible' : 'hidden', '--chrome-surface': `rgb(${chromeGray}, ${chromeGray}, ${chromeGray})` } as CSSProperties} aria-hidden={!opening.archiveInteractive} inert={!opening.archiveInteractive}>
               <header><button type="button" onClick={() => seek(0)}>{templateProfile.brand}<span> / ARCHIVE</span></button><button type="button" onClick={() => openModule('collaboration')}>Say hello <ArrowUpRight size={13} /></button></header>
               <nav className="archive-focus-nav" aria-label="Archive sections">{modules.map((item, index) => <button key={item.id} type="button" onClick={() => seek(progressForModule(item.id, galleryCount))} aria-current={current?.id === item.id ? 'location' : undefined} aria-label={`Explore ${item.label}`}>{index + 1}</button>)}</nav>
               <footer><span>{current ? current.label : 'Overview'}</span><button type="button" onClick={next}>{hasGalleryNext ? 'Next image' : 'Next chapter'} <ArrowDown size={12} /></button><span className="archive-t-readout">{String(modules.findIndex(item => item.id === current?.id) + 1).padStart(2, '0')} / 06</span></footer>

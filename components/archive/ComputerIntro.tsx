@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent } from 'react';
 import { introMedia, templateProfile } from './content';
 
 type ComputerIntroProps = {
@@ -13,7 +13,85 @@ type ComputerIntroProps = {
 export default function ComputerIntro({ onEnter, width: computerWidth, scale, loadingProgress, playVideo, reducedMotion }: ComputerIntroProps) {
   const screenRef = useRef<HTMLButtonElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const revealFrameRef = useRef<number | null>(null);
+  const revealPointRef = useRef({ x: 50, y: 50 });
+  const pointerInsideRef = useRef(false);
+  const keyboardFocusRef = useRef(false);
   const [playbackFailed, setPlaybackFailed] = useState(false);
+
+  const cancelRevealFrame = () => {
+    if (revealFrameRef.current !== null) {
+      cancelAnimationFrame(revealFrameRef.current);
+      revealFrameRef.current = null;
+    }
+  };
+
+  const paintRevealPoint = () => {
+    const screen = screenRef.current;
+    if (!screen) return;
+    screen.style.setProperty('--screen-pointer-x', `${revealPointRef.current.x}%`);
+    screen.style.setProperty('--screen-pointer-y', `${revealPointRef.current.y}%`);
+  };
+
+  const syncReveal = () => {
+    const screen = screenRef.current;
+    if (!screen) return;
+    if (!pointerInsideRef.current && keyboardFocusRef.current) {
+      cancelRevealFrame();
+      revealPointRef.current = { x: 50, y: 50 };
+      paintRevealPoint();
+    }
+    screen.dataset.colorReveal = String(pointerInsideRef.current || keyboardFocusRef.current);
+  };
+
+  const moveReveal = (event: PointerEvent<HTMLButtonElement>) => {
+    if (event.pointerType !== 'mouse' || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    revealPointRef.current = {
+      x: Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100)),
+      y: Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100)),
+    };
+    if (!pointerInsideRef.current) {
+      pointerInsideRef.current = true;
+      paintRevealPoint();
+      syncReveal();
+    }
+    if (revealFrameRef.current === null) {
+      revealFrameRef.current = requestAnimationFrame(() => {
+        revealFrameRef.current = null;
+        paintRevealPoint();
+      });
+    }
+  };
+
+  useEffect(() => {
+    const clearPointerReveal = () => {
+      cancelRevealFrame();
+      pointerInsideRef.current = false;
+      syncReveal();
+    };
+    const onVisibilityChange = () => {
+      if (document.hidden) clearPointerReveal();
+    };
+    window.addEventListener('blur', clearPointerReveal);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      cancelRevealFrame();
+      window.removeEventListener('blur', clearPointerReveal);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    // A scroll can hide the screen without sending a pointer-leave event.
+    if (!playVideo) {
+      cancelRevealFrame();
+      pointerInsideRef.current = false;
+      keyboardFocusRef.current = false;
+      if (screenRef.current) screenRef.current.dataset.colorReveal = 'false';
+    }
+  }, [playVideo]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -101,6 +179,26 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
             data-media={Boolean(introMedia.src || introMedia.poster)}
             type="button"
             onClick={openArchive}
+            onPointerEnter={moveReveal}
+            onPointerMove={moveReveal}
+            onPointerLeave={() => {
+              cancelRevealFrame();
+              pointerInsideRef.current = false;
+              syncReveal();
+            }}
+            onPointerCancel={() => {
+              cancelRevealFrame();
+              pointerInsideRef.current = false;
+              syncReveal();
+            }}
+            onFocus={(event) => {
+              keyboardFocusRef.current = event.currentTarget.matches(':focus-visible');
+              syncReveal();
+            }}
+            onBlur={() => {
+              keyboardFocusRef.current = false;
+              syncReveal();
+            }}
             aria-label="Open the archive"
             style={{
               position: 'absolute',
@@ -130,6 +228,9 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
                 onError={() => setPlaybackFailed(true)}
               />
             )}
+            {/* One decoder: the soft masked grayscale veil reveals the color beneath it. */}
+            <span className="archive-screen-monochrome-veil" aria-hidden="true" />
+            <span className="archive-screen-color-glow" aria-hidden="true" />
             <span className="archive-screen-eyebrow">{templateProfile.brand} / SELECTED WORK</span>
             <span className="archive-screen-title">
               <span className="archive-screen-title-line">An open</span>

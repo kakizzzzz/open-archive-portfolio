@@ -2,7 +2,9 @@
 
 The project license applies to the template's original code and placeholder SVGs. Third-party software and fonts retain their own licenses and copyright notices.
 
-The sample computer-screen video and its extracted poster are demo media, excluded from the MIT grant. Replace them with your own licensed media before redistributing a customized copy.
+## Computer-screen video
+
+The computer-screen video is an original work by KAKI (kakizzzzz), released with this template under its MIT license. Its extracted poster is covered by the same license. The web version removes the source's blank black tail, is cropped to the screen and compressed as H.264, and forms a roughly 40-second forward-and-reverse loop without repeating the endpoint frames. Color is retained in the media; a grayscale overlay provides the monochrome appearance and a diffuse color reveal around the pointer. No third-party stock video is included.
 
 ## Runtime software
 

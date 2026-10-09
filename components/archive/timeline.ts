@@ -78,6 +78,28 @@ const lerp = (from: number, to: number, t: number): number => from + (to - from)
 const phase = (t: number, from: number, to: number): number =>
   smoothstep(clampProgress((t - from) / (to - from)));
 
+const INTRO_END_SCENE = 0.13;
+const ARCHIVE_REVEAL_END_SCENE = 0.16;
+
+/** The incoming archive starts only after the computer has fully left. */
+export function sampleOpeningLayers(sceneProgress: number, reducedMotion = false) {
+  const progress = clampProgress(sceneProgress);
+  const computerOpacity = reducedMotion
+    ? Number(progress < INTRO_END_SCENE)
+    : 1 - phase(progress, 0.08, INTRO_END_SCENE);
+  const deskOpacity = reducedMotion
+    ? Number(progress >= INTRO_END_SCENE)
+    : phase(progress, INTRO_END_SCENE, ARCHIVE_REVEAL_END_SCENE);
+  return {
+    computerOpacity,
+    deskOpacity,
+    computerVisible: computerOpacity > 0,
+    archiveVisible: deskOpacity > 0,
+    computerInteractive: progress < 0.08 && computerOpacity > 0,
+    archiveInteractive: deskOpacity >= 1,
+  };
+}
+
 export interface CameraSegment {
   readonly from: CameraFrame;
   readonly to: CameraFrame;
@@ -157,6 +179,7 @@ export function sampleTimeline(t: number, compact = false, galleryCount = 1): Ti
         : (units - extra) / BASE_SCROLL_UNITS;
 
   const { from, to, fromModule, toModule, blend } = sampleCameraSegment(cameraProgress, compact);
+  const opening = sampleOpeningLayers(cameraProgress);
 
   return {
     camera: {
@@ -165,8 +188,8 @@ export function sampleTimeline(t: number, compact = false, galleryCount = 1): Ti
       scale: lerp(from.scale, to.scale, blend),
     },
     computerScale: lerp(1, 5, phase(cameraProgress, 0, 0.13)),
-    computerOpacity: 1 - phase(cameraProgress, 0.08, 0.13),
-    deskOpacity: phase(cameraProgress, 0.07, 0.13),
+    computerOpacity: opening.computerOpacity,
+    deskOpacity: opening.deskOpacity,
     activeModule: cameraProgress < 0.13 ? null : blend < 0.5 ? fromModule : toModule,
     progress,
     sceneProgress: cameraProgress,
@@ -181,6 +204,9 @@ export function sampleTimeline(t: number, compact = false, galleryCount = 1): Ti
 /** Clicking a module seeks to the first fully focused frame of that module. */
 export function progressForModule(id: ModuleId, count = 1): number {
   if (id === 'works') return progressForCameraStop(GALLERY_START_SCENE, count);
+  // The entrance and chapter-one buttons must finish the archive reveal,
+  // rather than stopping at the frame where both visual layers are transparent.
+  if (id === 'about') return progressForCameraStop(ARCHIVE_REVEAL_END_SCENE, count);
   const baseProgress = TIMELINE_STOPS.find(point => point.activeModule === id)?.t ?? 0.13;
   return progressForCameraStop(baseProgress, count);
 }

@@ -24,11 +24,21 @@ body.archive-page-open { background: #f3f3f3; color: #171717; overflow: hidden; 
 .archive-intro-center { min-width: 0; text-align: center; }
 .archive-computer-stage { margin: auto; transform-origin: 50% 38.1818%; will-change: transform; }
 .archive-computer-illustration { width: 100%; height: 100%; display: block; }
-.archive-computer-screen { --screen-label-size: calc(11px * var(--computer-unit)); border: none; border-radius: 8px; padding: calc(28px * var(--computer-unit)) calc(34px * var(--computer-unit)); display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; overflow: clip; color: #fff; background: #171717; text-align: left; font-family: 'Archive Mono', 'SFMono-Regular', 'Menlo', 'Consolas', 'PingFang SC', monospace; }
+@property --archive-reveal-strength { syntax: '<number>'; inherits: false; initial-value: 0; }
+.archive-computer-screen { --screen-label-size: calc(11px * var(--computer-unit)); --screen-pointer-x: 50%; --screen-pointer-y: 50%; --screen-reveal-radius: calc(170px * var(--computer-unit)); border: none; border-radius: 8px; padding: calc(28px * var(--computer-unit)) calc(34px * var(--computer-unit)); display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; overflow: clip; color: #fff; background: #171717; text-align: left; font-family: 'Archive Mono', 'SFMono-Regular', 'Menlo', 'Consolas', 'PingFang SC', monospace; }
 .archive-computer-screen:active { filter: brightness(.98); }
 .archive-screen-media { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; filter: grayscale(1); pointer-events: none; }
-.archive-computer-screen[data-media="true"]::after { content: ''; position: absolute; inset: 0; background: linear-gradient(110deg, #0009 0%, #0005 48%, #0002 100%); pointer-events: none; }
-.archive-screen-eyebrow, .archive-screen-title, .archive-screen-entry, .archive-frame-loading { z-index: 1; }
+.archive-screen-monochrome-veil, .archive-screen-color-glow { display: none; position: absolute; inset: 0; pointer-events: none; }
+@supports ((backdrop-filter: grayscale(1)) or (-webkit-backdrop-filter: grayscale(1))) and ((mask-image: radial-gradient(black, transparent)) or (-webkit-mask-image: radial-gradient(black, transparent))) {
+  .archive-computer-screen[data-media="true"] .archive-screen-media { filter: none; }
+  .archive-computer-screen[data-media="true"] .archive-screen-monochrome-veil { display: block; z-index: 1; --archive-reveal-strength: 0; -webkit-backdrop-filter: grayscale(1); backdrop-filter: grayscale(1); -webkit-mask-image: radial-gradient(circle var(--screen-reveal-radius) at var(--screen-pointer-x) var(--screen-pointer-y), rgb(0 0 0 / calc(1 - var(--archive-reveal-strength))) 0%, rgb(0 0 0 / calc(1 - var(--archive-reveal-strength) * .96)) 27%, rgb(0 0 0 / calc(1 - var(--archive-reveal-strength) * .6)) 57%, #000 100%); mask-image: radial-gradient(circle var(--screen-reveal-radius) at var(--screen-pointer-x) var(--screen-pointer-y), rgb(0 0 0 / calc(1 - var(--archive-reveal-strength))) 0%, rgb(0 0 0 / calc(1 - var(--archive-reveal-strength) * .96)) 27%, rgb(0 0 0 / calc(1 - var(--archive-reveal-strength) * .6)) 57%, #000 100%); transition: --archive-reveal-strength 320ms ease; }
+  .archive-computer-screen[data-color-reveal="true"] .archive-screen-monochrome-veil { --archive-reveal-strength: 1; }
+  .archive-computer-screen[data-media="true"] .archive-screen-color-glow { display: block; z-index: 2; opacity: 0; background: radial-gradient(circle var(--screen-reveal-radius) at var(--screen-pointer-x) var(--screen-pointer-y), #ffffff18 0%, #ffffff0a 36%, #ffffff00 82%); transition: opacity 320ms ease; }
+  .archive-computer-screen[data-color-reveal="true"] .archive-screen-color-glow { opacity: 1; }
+}
+.archive-computer-screen[data-media="true"]::after { content: ''; position: absolute; inset: 0; z-index: 3; background: linear-gradient(110deg, #0009 0%, #0005 48%, #0002 100%); pointer-events: none; }
+.archive-screen-eyebrow, .archive-screen-title, .archive-screen-entry, .archive-frame-loading { z-index: 4; }
+@media (prefers-reduced-motion: reduce) { .archive-screen-monochrome-veil, .archive-screen-color-glow { transition: none !important; } }
 .archive-screen-eyebrow, .archive-screen-title { position: relative; }
 .archive-screen-eyebrow { font: 400 var(--screen-label-size)/1.5 'Archive Mono', monospace; letter-spacing: calc(1.5px * var(--computer-unit)); color: #fff; margin-bottom: calc(20px * var(--computer-unit)); }
 .archive-screen-title { font-family: 'Archive Space', 'PingFang SC', 'Microsoft YaHei', sans-serif; font-size: calc(49px * var(--computer-unit)); line-height: 1.2; font-weight: 700; letter-spacing: calc(-1.4px * var(--computer-unit)); }
@@ -84,7 +94,7 @@ body.archive-page-open { background: #f3f3f3; color: #171717; overflow: hidden; 
 .archive-desk-perspective .archive-desk-module-title { margin-top: 28px; font-size: 39px; }
 .archive-desk-user-tag { margin-top: 23px; display: inline-block; align-self: flex-start; padding: 8px 12px; background: #171717; color: #fff; font: 400 15px/1.4 'Archive Mono', 'PingFang SC', monospace; }
 .archive-desk-user-fact { margin-top: 19px; font-size: 17px; line-height: 1.7; }
-.archive-resume-slip { position: absolute; left: 870px; top: 483px; width: 126px; border: 2px solid #c6c6c6; padding: 0; background: #fff; color: var(--ink); transform: rotate(8deg); z-index: 3; box-shadow: 3px 4px 0 #17171714; }
+.archive-resume-slip { position: absolute; left: 866px; top: 483px; width: 136px; border: 2px solid #c6c6c6; padding: 0; background: #fff; color: var(--ink); transform: rotate(8deg); z-index: 3; box-shadow: 3px 4px 0 #17171714; }
 .archive-resume-paper { display: block; }
 .archive-resume-paper svg { width: 100%; height: auto; display: block; }
 .archive-resume-slip-label { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 5px 9px 8px; font-size: 13px; }
@@ -211,7 +221,7 @@ body.archive-page-open { background: #f3f3f3; color: #171717; overflow: hidden; 
   .archive-desk-about-title { font-size: 56px; letter-spacing: -2px; }
   .archive-desk-about .archive-desk-eyebrow { font-size: 22px; }
   .archive-desk-about-copy { font-size: 20px; }
-  .archive-resume-slip { left: 850px; top: 555px; width: 106px; }
+  .archive-resume-slip { left: 850px; top: 555px; width: 112px; }
   .archive-resume-slip-label { font-size: 18px; }
   .archive-desk-fragment-facts, .archive-desk-craft-copy, .archive-desk-user-fact { font-size: 19px; }
   .archive-desk-platforms { font-size: 18px; }

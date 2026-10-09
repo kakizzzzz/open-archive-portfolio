@@ -50,13 +50,13 @@ Start with `templateProfile`, `contactEmail`, `contactPhone`, and `templateResum
 
 ### Computer-screen video
 
-Configure `introMedia.src` and `introMedia.poster` in `components/archive/content.ts`. Replace `public/assets/template/intro-pingpong.mp4` and `public/assets/template/intro-poster.jpg` with your own clip and still image. Both fields accept `null`; set both to `null` for a text-only screen.
+Configure `introMedia.src` and `introMedia.poster` in `components/archive/content.ts`. The default files are `public/assets/template/intro-loop.mp4` and `public/assets/template/intro-loop-poster.jpg`. Replace them with your own color clip and matching still image, or update the paths using `import.meta.env.BASE_URL` so they work under your GitHub Pages repository path. Set both fields to `null` for a text-only screen.
 
-The video sits behind the title, cropped to the screen in black and white. The demo plays forward, then backward, without repeating either turning frame. It loops silently, pauses when the opening is hidden or the browser tab is in the background, and shows the static poster when reduced motion is enabled.
+The video sits behind the retained title and plays silently in a roughly 40-second forward-and-reverse loop. The source's blank black tail is removed, and the endpoint frames are not repeated at the turns. A grayscale layer covers the color video; hovering over the screen reveals color through a soft, diffuse mask around the pointer. The layers share the same video frames. Playback pauses when the opening is hidden or the browser tab is in the background, and reduced motion uses the static poster.
 
-在 `introMedia` 中配置视频与海报路径，替换上述文件即可。两个字段都可设为 `null`；全部置空后保留纯文字屏幕。示例以正放、倒放往返衔接，转向点不重复停帧。视频在标题后方黑白裁剪、静音循环；离开开场或切到后台时暂停，减少动态效果模式下显示静态海报。
+在 `introMedia` 中配置视频与海报路径，可直接替换上述文件为自己的彩色视频及对应静帧。更换文件名时使用 `import.meta.env.BASE_URL` 拼接路径，以适配 GitHub Pages 的仓库子路径。两个字段都设为 `null` 后保留纯文字屏幕。默认视频约 40 秒，静音正向、反向连续循环，已去掉原片末尾的空白黑屏，并避免在转向处重复端点帧。黑白图层覆盖彩色视频，鼠标移到屏幕上时，在指针周围柔和地露出颜色，文字保持不变。两层使用同一视频画面；离开开场或切到后台时暂停，减少动态效果模式下显示静态海报。
 
-The bundled screen clip and its poster are demo media outside the MIT grant. Replace them with your own licensed media when redistributing your copy. The template's MIT license does not automatically cover media you add. 示例屏幕视频及海报不包含在 MIT 授权中；分发自己的副本时，请替换为自己有权使用与发布的媒体。
+The default video is an original work by KAKI (kakizzzzz). It and its extracted poster are included under the template's MIT license, along with the original code and SVG illustrations. No third-party stock video is shipped. 默认视频由 KAKI 原创，视频及提取海报与模板原创代码、SVG 图形一同采用 MIT 许可。替换媒体时，请使用自己有权发布的素材。
 
 ## Publish with GitHub Pages
 
