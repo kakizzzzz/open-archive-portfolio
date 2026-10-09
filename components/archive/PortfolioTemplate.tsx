@@ -18,10 +18,21 @@ import { getGalleryNotesLayout } from './galleryNotesLayout';
 import useViewport from './useViewport';
 import './archive.css';
 
+type DialogScrollSnapshot = {
+  progress: number;
+  left: number;
+  overflowY: string;
+  opener: HTMLElement | null;
+  ancestors: { element: HTMLElement; top: number; left: number }[];
+  closing: boolean;
+};
+
 export default function PortfolioTemplate() {
   const reducedMotion = useReducedMotion();
   const track = useRef<HTMLElement>(null);
   const scrollProgress = useRef(0);
+  const dialogScroll = useRef<DialogScrollSnapshot | null>(null);
+  const restoreFrame = useRef(0);
   const [t, setT] = useState(0);
   const viewport = useViewport();
   const [detail, setDetail] = useState<ArchiveDetail | null>(null);
@@ -73,24 +84,10 @@ export default function PortfolioTemplate() {
     return () => { document.title = title; document.documentElement.lang = lang; document.body.classList.remove('archive-page-open'); };
   }, []);
 
-  useEffect(() => {
-    const element = track.current;
-    if (!isDetailOpen || !element) return;
-    const savedTop = element.scrollTop;
-    const length = element.scrollHeight - element.clientHeight;
-    const savedProgress = length > 0 ? savedTop / length : 0;
-    scrollProgress.current = savedProgress;
-    setT(savedProgress);
-    const previousOverflow = element.style.overflowY;
-    element.scrollTo({ top: savedTop, left: 0, behavior: 'instant' });
-    element.style.overflowY = 'hidden';
-    return () => {
-      element.style.overflowY = previousOverflow;
-      scrollProgress.current = savedProgress;
-      setT(savedProgress);
-      element.scrollTo({ top: savedProgress * (element.scrollHeight - element.clientHeight), left: 0, behavior: 'instant' });
-    };
-  }, [isDetailOpen]);
+  useEffect(() => () => {
+    window.cancelAnimationFrame(restoreFrame.current);
+    if (track.current && dialogScroll.current) track.current.style.overflowY = dialogScroll.current.overflowY;
+  }, []);
 
   useLayoutEffect(() => {
     const element = track.current;
@@ -101,8 +98,12 @@ export default function PortfolioTemplate() {
       scrollProgress.current = length > 0 ? Math.min(1, Math.max(0, element.scrollTop / length)) : 0;
     };
     const onScroll = () => {
+      if (dialogScroll.current) return;
       readProgress();
-      if (!raf) raf = window.requestAnimationFrame(() => { raf = 0; setT(scrollProgress.current); });
+      if (!raf) raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        if (!dialogScroll.current) setT(scrollProgress.current);
+      });
     };
     element.addEventListener('scroll', onScroll, { passive: true });
     readProgress();
@@ -113,8 +114,56 @@ export default function PortfolioTemplate() {
   useLayoutEffect(() => {
     const element = track.current;
     if (!element) return;
-    element.scrollTo({ top: scrollProgress.current * (element.scrollHeight - element.clientHeight), left: 0, behavior: 'instant' });
+    const progress = dialogScroll.current?.progress ?? scrollProgress.current;
+    element.scrollTo({ top: progress * (element.scrollHeight - element.clientHeight), left: 0, behavior: 'instant' });
   }, [viewport.width, viewport.height, galleryCount]);
+
+  const openDetail = (nextDetail: ArchiveDetail) => {
+    const element = track.current;
+    if (!element || dialogScroll.current?.closing) return;
+    if (!dialogScroll.current) {
+      const length = element.scrollHeight - element.clientHeight;
+      const progress = length > 0 ? element.scrollTop / length : 0;
+      const opener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      const ancestors: DialogScrollSnapshot['ancestors'] = [];
+      for (let ancestor = opener?.parentElement; ancestor && ancestor !== element; ancestor = ancestor.parentElement) {
+        if (element.contains(ancestor)) ancestors.push({ element: ancestor, top: ancestor.scrollTop, left: ancestor.scrollLeft });
+      }
+      // Freeze before showModal can focus or scroll anything in the scene.
+      dialogScroll.current = { progress, left: element.scrollLeft, overflowY: element.style.overflowY, opener, ancestors, closing: false };
+      scrollProgress.current = progress;
+      setT(progress);
+      element.scrollTo({ top: element.scrollTop, left: element.scrollLeft, behavior: 'instant' });
+      element.style.overflowY = 'hidden';
+    }
+    setDetail(nextDetail);
+  };
+
+  const closeDetail = () => {
+    const saved = dialogScroll.current;
+    const element = track.current;
+    if (!saved || saved.closing || !element) return;
+    saved.closing = true;
+    setDetail(null);
+    const restore = () => {
+      element.style.overflowY = saved.overflowY;
+      scrollProgress.current = saved.progress;
+      setT(saved.progress);
+      element.scrollTo({ top: saved.progress * (element.scrollHeight - element.clientHeight), left: saved.left, behavior: 'instant' });
+      for (const item of saved.ancestors) {
+        item.element.scrollTo({ top: item.top, left: item.left, behavior: 'instant' });
+      }
+    };
+    saved.opener?.focus({ preventScroll: true });
+    restore();
+    // Native focus restoration and React's close commit must both finish before
+    // the scroll observer can advance the timeline again.
+    restoreFrame.current = window.requestAnimationFrame(() => {
+      restore();
+      dialogScroll.current = null;
+      restoreFrame.current = 0;
+    });
+  };
 
   const seek = (progress: number) => {
     const element = track.current;
@@ -124,9 +173,9 @@ export default function PortfolioTemplate() {
 
   const openModule = (id: ModuleId) => {
     if (id === 'works') seek(progressForModule(id, galleryCount));
-    else setDetail({ type: 'module', id });
+    else openDetail({ type: 'module', id });
   };
-  const openWork = (id: string) => setDetail({ type: 'work', id });
+  const openWork = (id: string) => openDetail({ type: 'work', id });
   const seekImage = (index: number) => seek(progressForGalleryProgress(gallery.positions[Math.max(0, Math.min(galleryCount - 1, index))], galleryCount));
   const hasGalleryNext = current?.id === 'works' && frame.galleryProgress < 1;
   const next = () => {
@@ -169,7 +218,7 @@ export default function PortfolioTemplate() {
                   ? `rotate(${portal.rotation - card.rotation}deg) translate3d(${-cardAnchorX * zoomScale}px, ${-cardAnchorY * zoomScale}px, 0) scale(${zoomScale})`
                   : `translate3d(${-camera.x * scale}px, ${-camera.y * scale}px, 0) scale(${scale})`,
               }}>
-                <ArchiveDesk onSelect={openModule} onResume={() => setDetail({ type: 'resume' })} />
+                <ArchiveDesk onSelect={openModule} onResume={() => openDetail({ type: 'resume' })} />
               </div>
             </div>
             <div className="archive-gallery-layer" data-expansion={frame.galleryExpansion} style={{
@@ -212,7 +261,7 @@ export default function PortfolioTemplate() {
           </div>
         </div>
       </main>
-      <ArchiveDialog detail={detail} onClose={() => setDetail(null)} onView={openWork} />
+      <ArchiveDialog detail={detail} onClose={closeDetail} onView={openWork} />
     </div>
   );
 }

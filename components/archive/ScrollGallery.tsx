@@ -42,22 +42,25 @@ export default function ScrollGallery({ layout, composition, progress, reducedMo
         } : { transform: `translate3d(${-position * 100}%, 0, 0)` }}>
           {portfolioWorks.map((work, workIndex) => (
             <figure className="archive-gallery-slide" key={work.id} style={layout.compact ? { width: layout.widths[workIndex] } : undefined}>
-              <button
-                className="archive-gallery-art"
-                type="button"
-                onClick={() => onView(work.id)}
-                tabIndex={workIndex === index ? 0 : -1}
-                aria-label={`View ${work.title}`}
-              >
-                <img
-                  src={work.image}
-                  alt={work.alt}
-                  width={work.width}
-                  height={work.height}
-                  loading={workIndex < 2 ? 'eager' : 'lazy'}
-                  decoding="async"
-                />
-              </button>
+              <div className="archive-gallery-art-area">
+                <button
+                  className="archive-gallery-art"
+                  type="button"
+                  onClick={() => onView(work.id)}
+                  tabIndex={workIndex === index ? 0 : -1}
+                  aria-label={`View ${work.title}`}
+                  style={{ aspectRatio: `${work.width} / ${work.height}` }}
+                >
+                  <img
+                    src={work.image}
+                    alt={work.alt}
+                    width={work.width}
+                    height={work.height}
+                    loading={workIndex < 2 ? 'eager' : 'lazy'}
+                    decoding="async"
+                  />
+                </button>
+              </div>
               <figcaption className="archive-gallery-caption" style={{ transform: `translate3d(0, ${composition.captionOffsetY}px, 0)` }}>
                 <span className="archive-gallery-title">{work.title}</span>
                 {work.caption && <span className="archive-gallery-description">{work.caption}</span>}

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import { ArrowUpRight, ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { contactEmail, contactPhone, otherPortfolioUrl, portfolioWorks, reasons } from './content';
 import { portfolioModules } from './modules';
@@ -18,31 +18,42 @@ type ArchiveDialogProps = {
 
 export default function ArchiveDialog({ detail, onClose, onView }: ArchiveDialogProps) {
   const dialog = useRef<HTMLDialogElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
   const module = detail?.type === 'module' ? portfolioModules.find(item => item.id === detail.id) : undefined;
   const workIndex = detail?.type === 'work' ? portfolioWorks.findIndex(work => work.id === detail.id) : -1;
   const work = portfolioWorks[workIndex];
   const selectedReasons = module?.id === 'about' ? reasons : reasons.filter(reason => module?.reasonIds.includes(reason.id));
   const isResume = detail?.type === 'resume';
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const element = dialog.current;
     if (!element) return;
-    if (detail && !element.open) element.showModal();
+    if (detail && !element.open) {
+      element.showModal();
+      closeButton.current?.focus({ preventScroll: true });
+    }
     if (!detail && element.open) element.close();
     element.scrollTop = 0;
   }, [detail]);
+
+  const requestClose = () => {
+    // Close the native top layer before the parent restores focus and scrolling.
+    if (dialog.current?.open) dialog.current.close();
+    onClose();
+  };
 
   return (
     <dialog
       ref={dialog}
       className={`archive-archive-dialog${isResume ? ' archive-resume-dialog' : ''}${work ? ' archive-image-dialog' : ''}`}
-      onClose={onClose}
-      onClick={event => { if (event.target === event.currentTarget) onClose(); }}
+      onClose={event => { if (!event.currentTarget.open) onClose(); }}
+      onCancel={event => { event.preventDefault(); requestClose(); }}
+      onClick={event => { if (event.target === event.currentTarget) requestClose(); }}
       aria-labelledby={isResume ? undefined : 'archive-detail-title'}
       aria-label={isResume ? 'Profile' : undefined}
     >
       {detail && <div className="archive-detail-paper">
-        <button autoFocus type="button" className="archive-detail-close" onClick={onClose} aria-label="Close details"><X size={20} /></button>
+        <button ref={closeButton} type="button" className="archive-detail-close" onClick={requestClose} aria-label="Close details"><X size={20} /></button>
         {isResume ? <ResumeDetails /> : <h2 id="archive-detail-title">{work?.title || module?.label}</h2>}
         {module && selectedReasons.map(reason => <article key={reason.id} className="archive-detail-reason">
           <span>{reason.id}</span><div><h3>{reason.title}</h3><p className={reason.author ? 'archive-poem' : undefined}>{reason.body}</p>{reason.author && <a className="archive-poem-credit" href={reason.source} target="_blank" rel="noopener noreferrer">— {reason.author} <ArrowUpRight size={12} aria-hidden="true" /></a>}</div>
