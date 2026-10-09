@@ -84,8 +84,8 @@ body.archive-page-open { background: #f3f3f3; color: #171717; overflow: hidden; 
 .archive-desk-perspective .archive-desk-module-title { margin-top: 28px; font-size: 39px; }
 .archive-desk-user-tag { margin-top: 23px; display: inline-block; align-self: flex-start; padding: 8px 12px; background: #171717; color: #fff; font: 400 15px/1.4 'Archive Mono', 'PingFang SC', monospace; }
 .archive-desk-user-fact { margin-top: 19px; font-size: 17px; line-height: 1.7; }
-.archive-resume-slip { position: absolute; left: 900px; top: 483px; width: 126px; border: 0; padding: 0; background: none; color: var(--ink); transform: rotate(8deg); z-index: 3; }
-.archive-resume-paper { display: block; box-shadow: 3px 4px 0 #17171714; }
+.archive-resume-slip { position: absolute; left: 870px; top: 483px; width: 126px; border: 2px solid #c6c6c6; padding: 0; background: #fff; color: var(--ink); transform: rotate(8deg); z-index: 3; box-shadow: 3px 4px 0 #17171714; }
+.archive-resume-paper { display: block; }
 .archive-resume-paper svg { width: 100%; height: auto; display: block; }
 .archive-resume-slip-label { display: flex; align-items: center; justify-content: space-between; background: #fff; padding: 5px 9px 8px; font-size: 13px; }
 .archive-resume-slip-arrow { width: 17px; height: 17px; }

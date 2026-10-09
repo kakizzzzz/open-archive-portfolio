@@ -29,7 +29,7 @@ export const otherPortfolioUrl = templateProfile.website;
 
 // Set both fields to null for the original text-only computer screen.
 export const introMedia: { src: string | null; poster: string | null } = {
-  src: `${import.meta.env.BASE_URL}assets/template/intro-loop.mp4`,
+  src: `${import.meta.env.BASE_URL}assets/template/intro-pingpong.mp4`,
   poster: `${import.meta.env.BASE_URL}assets/template/intro-poster.jpg`,
 };
 
