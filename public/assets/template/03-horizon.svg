@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title"><title id="title">Horizon</title><rect width="1200" height="1200" fill="#fff"/>
+  <text x="62" y="79" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >03 / A DISTANCE TO KEEP</text>
+  <text x="1138" y="79" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" text-anchor="end">FIELD NOTES</text>
+  <circle cx="600" cy="467" r="204" fill="#111"/>
+  <rect x="0" y="468" width="1200" height="289" fill="#fff"/>
+  <line x1="61" y1="468" x2="1139" y2="468" stroke="#111"  stroke-width="2"/>
+  <line x1="61" y1="487" x2="1139" y2="487"  stroke-width="1" stroke="#bbb"/>
+  <line x1="61" y1="507" x2="1139" y2="507"  stroke-width="1" stroke="#ddd"/>
+  <text x="52" y="939" font-family="Helvetica Neue, Arial, sans-serif" font-size="185" fill="#111" font-weight="700" letter-spacing="-11">HORIZON</text>
+  <text x="62" y="1027" font-family="Georgia, Times New Roman, serif" font-size="42" font-style="italic" fill="#444">Somewhere, slowly.</text>
+  <line x1="62" y1="1110" x2="1138" y2="1110" stroke="#111" stroke-width="1" />
+  <text x="62" y="1150" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >THE EARTH CONTINUES</text>
+  <text x="1138" y="1150" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" text-anchor="end">003</text>
+</svg>

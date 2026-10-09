@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title"><title id="title">Begin Again</title><rect width="1200" height="1200" fill="#fff"/>
+  <text x="62" y="79" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >08 / THE NEXT PAGE</text>
+  <text x="1138" y="79" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" text-anchor="end">ALWAYS IN PROGRESS</text>
+  <path d="M208 617A392 392 0 1 1 992 617" fill="none" stroke="#111" stroke-width="2"/>
+  <path d="M264 617A336 336 0 1 1 936 617" fill="none" stroke="#777" stroke-width="1"/>
+  <path d="M320 617A280 280 0 1 1 880 617" fill="none" stroke="#aaa" stroke-width="1"/>
+  <path d="M376 617A224 224 0 1 1 824 617" fill="none" stroke="#ccc" stroke-width="1"/>
+  <circle cx="600" cy="617" r="43" fill="#111"/>
+  <line x1="62" y1="617" x2="1138" y2="617" stroke="#111" stroke-width="1" />
+  <text x="50" y="830" font-family="Helvetica Neue, Arial, sans-serif" font-size="190" fill="#111" font-weight="700" letter-spacing="-10">BEGIN</text>
+  <text x="50" y="1013" font-family="Helvetica Neue, Arial, sans-serif" font-size="190" fill="#111" font-weight="700" letter-spacing="-10">AGAIN</text>
+  <text x="689" y="1000" font-family="Georgia, Times New Roman, serif" font-size="34" font-style="italic" fill="#444">An unfinished</text>
+  <text x="689" y="1044" font-family="Georgia, Times New Roman, serif" font-size="34" font-style="italic" fill="#444">collection.</text>
+  <line x1="62" y1="1110" x2="1138" y2="1110" stroke="#111" stroke-width="1" />
+  <text x="62" y="1150" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >THERE IS ROOM FOR ONE MORE IDEA</text>
+  <text x="1138" y="1150" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" text-anchor="end">008</text>
+</svg>

@@ -1,0 +1,12 @@
+/* Minimal browser reset for the standalone portfolio template. */
+*, ::before, ::after { box-sizing: border-box; margin: 0; padding: 0; border: 0 solid; }
+html { line-height: 1.5; -webkit-text-size-adjust: 100%; font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+body { margin: 0; padding: 0; background: #f3f3f3; }
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+a { color: inherit; text-decoration: inherit; }
+button, input, select, textarea { font: inherit; letter-spacing: inherit; color: inherit; border-radius: 0; background: transparent; }
+button { appearance: button; }
+ol, ul, menu { list-style: none; }
+img, svg, video, canvas, audio, iframe, embed, object { display: block; vertical-align: middle; }
+img, video { max-width: 100%; height: auto; }
+dialog:not([open]) { display: none; }

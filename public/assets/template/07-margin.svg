@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200" role="img" aria-labelledby="title"><title id="title">In the Margin</title><rect width="900" height="1200" fill="#fff"/>
+  <text x="54" y="71" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >07 / ON AN ORDINARY DAY</text>
+  <line x1="54" y1="98" x2="846" y2="98" stroke="#111" stroke-width="1" />
+  <rect x="55" y="145" width="23" height="948" fill="#111"/>
+  <text x="120" y="271" font-family="Georgia, Times New Roman, serif" font-size="75" fill="#111">In the</text>
+  <text x="114" y="406" font-family="Georgia, Times New Roman, serif" font-size="136" letter-spacing="-6" fill="#111">Margin</text>
+  <line x1="121" y1="461" x2="845" y2="461" stroke="#111" stroke-width="1" />
+  <text x="125" y="554" font-family="Georgia, Times New Roman, serif" font-size="32" font-style="italic" fill="#444">Notes from an ordinary day.</text>
+  <text x="126" y="720" font-family="Georgia, Times New Roman, serif" font-size="30" fill="#111">A window, left open.</text>
+  <text x="126" y="773" font-family="Georgia, Times New Roman, serif" font-size="30" fill="#111">The light, arriving quietly.</text>
+  <text x="126" y="826" font-family="Georgia, Times New Roman, serif" font-size="30" fill="#111">Something worth keeping.</text>
+  <circle cx="772" cy="986" r="53" fill="none" stroke="#111" stroke-width="1"/>
+  <path d="M736 986H808M772 950V1022" stroke="#111" stroke-width="1"/>
+  <line x1="120" y1="1093" x2="846" y2="1093" stroke="#111" stroke-width="1" />
+  <text x="120" y="1160" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >LEAVE A LITTLE SPACE</text>
+  <text x="846" y="1160" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" text-anchor="end">007</text>
+</svg>

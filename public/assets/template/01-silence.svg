@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200" role="img" aria-labelledby="title"><title id="title">Silence</title><rect width="900" height="1200" fill="#111"/>
+  <circle cx="450" cy="470" r="299" fill="#fff"/>
+  <circle cx="450" cy="470" r="277" fill="none" stroke="#111" stroke-width="1"/>
+  <path d="M174 470H726" stroke="#111" stroke-width="1"/>
+  <path d="M450 192V748" stroke="#111" stroke-width="1"/>
+  <circle cx="450" cy="470" r="7" fill="#111"/>
+  <text x="52" y="76" font-family="Courier New, monospace" font-size="15" letter-spacing="3" fill="#fff">01 / THE QUIET COLLECTION</text>
+  <text x="49" y="1010" font-family="Georgia, Times New Roman, serif" font-size="155" letter-spacing="-7" fill="#fff">SILENCE</text>
+  <text x="55" y="1073" font-family="Georgia, Times New Roman, serif" font-size="30" fill="#ccc">A place between thoughts.</text>
+  <line x1="55" y1="1124" x2="845" y2="1124" stroke="#777"/>
+  <text x="55" y="1160" font-family="Courier New, monospace" font-size="13" letter-spacing="2" fill="#aaa">LESS NOISE. MORE ROOM.</text>
+  <text x="845" y="1160" text-anchor="end" font-family="Courier New, monospace" font-size="13" fill="#aaa">001</text>
+</svg>

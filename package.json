@@ -1,0 +1,37 @@
+{
+  "name": "open-archive-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A monochrome, scroll-driven paper archive portfolio template by KAKI.",
+  "license": "MIT",
+  "author": "KAKI (kakizzzzz)",
+  "engines": {
+    "node": ">=22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kakizzzzz/open-archive-portfolio.git"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && node scripts/build.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "framer-motion": "12.34.0",
+    "lucide-react": "0.563.0",
+    "@fontsource/inter": "5.2.8"
+  },
+  "devDependencies": {
+    "vite": "6.4.1",
+    "@vitejs/plugin-react": "5.1.4",
+    "typescript": "5.8.3",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@types/node": "22.19.11"
+  }
+}

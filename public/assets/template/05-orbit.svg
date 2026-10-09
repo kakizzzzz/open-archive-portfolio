@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1400" viewBox="0 0 1000 1400" role="img" aria-labelledby="title"><title id="title">Orbit</title><rect width="1000" height="1400" fill="#fff"/>
+  <text x="63" y="79" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >05 / CIRCULAR THINKING</text>
+  <line x1="63" y1="104" x2="937" y2="104" stroke="#111" stroke-width="1" />
+  <text x="49" y="330" font-family="Helvetica Neue, Arial, sans-serif" font-size="238" fill="#111" font-weight="700" letter-spacing="-15">ORBIT</text>
+  <g transform="translate(500 745) rotate(-28)">
+    <ellipse rx="357" ry="222" fill="none" stroke="#111" stroke-width="2"/>
+    <ellipse rx="306" ry="222" fill="none" stroke="#111" stroke-width="1"/>
+    <ellipse rx="222" ry="306" fill="none" stroke="#888" stroke-width="1"/>
+    <circle r="102" fill="#111"/>
+    <circle cx="301" cy="-120" r="23" fill="#111"/>
+    <circle cx="-309" cy="110" r="13" fill="#aaa"/>
+  </g>
+  <text x="67" y="1230" font-family="Georgia, Times New Roman, serif" font-size="41" font-style="italic" fill="#333">Return, then begin again.</text>
+  <line x1="63" y1="1311" x2="937" y2="1311" stroke="#111" stroke-width="1" />
+  <text x="63" y="1358" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >NOT EVERY JOURNEY IS A STRAIGHT LINE</text>
+  <text x="937" y="1358" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" text-anchor="end">005</text>
+</svg>
