@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title"><title id="title">An Open Room</title><rect width="1200" height="900" fill="#fff"/>
-  <rect x="600" width="600" height="900" fill="#111"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-labelledby="title"><title id="title">An Open Room</title><rect width="1200" height="900" fill="#ededed"/>
+  <rect x="600" width="600" height="900" fill="#dedede"/>
   <text x="57" y="68" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >06 / AN INVITATION</text>
   <rect x="682" y="132" width="432" height="617" fill="#fff"/>
   <path d="M730 710V178H1065V710" fill="none" stroke="#111" stroke-width="2"/>
@@ -12,5 +12,5 @@
   <text x="59" y="650" font-family="Georgia, Times New Roman, serif" font-size="31" fill="#444">for what is next.</text>
   <line x1="57" y1="796" x2="543" y2="796" stroke="#111" stroke-width="1" />
   <text x="57" y="845" font-family="Courier New, monospace" font-size="15" fill="#111" letter-spacing="2" >THE DOOR IS OPEN</text>
-  <text x="1143" y="845" text-anchor="end" font-family="Courier New, monospace" font-size="15" fill="#fff">006</text>
+  <text x="1143" y="845" text-anchor="end" font-family="Courier New, monospace" font-size="15" fill="#111">006</text>
 </svg>
