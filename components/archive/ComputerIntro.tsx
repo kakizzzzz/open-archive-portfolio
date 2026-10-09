@@ -18,16 +18,21 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+    let active = true;
     const syncPlayback = () => {
       if (playVideo && !reducedMotion && !document.hidden) {
         video.muted = true;
         // Autoplay can be declined by the browser; keep the poster as a fallback.
-        void video.play().catch(() => setPlaybackFailed(true));
+        void video.play().catch((error: unknown) => {
+          // A quick scroll or tab switch may cancel a pending play request.
+          if (active && !(error instanceof DOMException && error.name === 'AbortError')) setPlaybackFailed(true);
+        });
       } else video.pause();
     };
     syncPlayback();
     document.addEventListener('visibilitychange', syncPlayback);
     return () => {
+      active = false;
       video.pause();
       document.removeEventListener('visibilitychange', syncPlayback);
     };
