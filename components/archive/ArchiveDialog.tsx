@@ -68,7 +68,9 @@ export default function ArchiveDialog({ detail, onClose, onView }: ArchiveDialog
         </div>}
         {work && <>
           <figure className="archive-lightbox">
-            <img src={work.image} alt={work.alt} width={work.width} height={work.height} decoding="async" />
+            <div className="archive-lightbox-image">
+              <img src={work.image} alt={work.alt} width={work.width} height={work.height} decoding="async" />
+            </div>
             <figcaption>{work.caption}</figcaption>
           </figure>
           <nav className="archive-lightbox-actions" aria-label="Browse enlarged images">

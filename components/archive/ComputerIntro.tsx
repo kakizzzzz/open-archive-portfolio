@@ -172,11 +172,11 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
             <rect x="205" y="385" width="6" height="2" rx="1" fill="#aaaaaa" />
             <rect x="218" y="385" width="6" height="2" rx="1" fill="#aaaaaa" />
             <circle cx="568" cy="387" r="2" fill={screenOn ? '#aaaaaa' : '#555555'} />
+            <circle cx="590" cy="387" r="6" fill="#aaaaaa" />
+            <path d="M590 383.5v3m-2-1c-2.5 2.5-1 5.5 2 5.5s4.5-3 2-5.5" fill="none" stroke="#090909" strokeWidth="1" strokeLinecap="round" />
 
             {/* Front desktop case with a power key and a simple floppy slot. */}
-            <rect x="127" y="454" width="28" height="30" rx="3" fill="#aaaaaa" />
-            <path d="M141 461v6m-3-2c-4 4-1 10 3 10s7-6 3-10" fill="none" stroke="#090909" strokeWidth="1.5" strokeLinecap="round" />
-            <circle cx="172" cy="478" r="2" fill="#aaaaaa" />
+            <circle cx="172" cy="478" r="2" fill={screenOn ? '#aaaaaa' : '#555555'} />
             <g stroke="#090909" strokeWidth="3" strokeLinecap="round">
               {Array.from({ length: 17 }, (_, index) => (
                 <path key={index} d={`M${194 + index * 10} 456v29`} />
@@ -271,11 +271,11 @@ export default function ComputerIntro({ onEnter, width: computerWidth, scale, lo
             aria-pressed={screenOn}
             title={screenOn ? 'Turn off the screen' : 'Turn on the screen'}
             onClick={() => setScreenOn(on => !on)}
-            style={{ left: `${(590 / 740) * 100}%`, top: `${(387 / 550) * 100}%` }}
+            style={{ left: `${(141 / 740) * 100}%`, top: `${(469 / 550) * 100}%` }}
           >
-            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-              <circle cx="8" cy="8" r="7" />
-              <path d="M8 3.5v4m-3-2a4 4 0 1 0 6 0" fill="none" stroke="#090909" strokeWidth="1.5" strokeLinecap="round" />
+            <svg viewBox="0 0 28 30" aria-hidden="true" focusable="false">
+              <rect width="28" height="30" rx="3" />
+              <path d="M14 7v6m-3-2c-4 4-1 10 3 10s7-6 3-10" fill="none" stroke="#090909" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
           </button>
         </div>
