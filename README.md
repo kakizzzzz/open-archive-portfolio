@@ -6,6 +6,12 @@
 
 **[打开演示 ↗](https://kakizzzzz.github.io/open-archive-portfolio/) · [MIT License](LICENSE)**
 
+## 交互演示
+
+https://github.com/user-attachments/assets/3344bb0f-10d2-4251-905b-c12c44fd2516
+
+57 秒无声录屏 · 点击播放
+
 ## 四个画面，一段连续的浏览体验
 
 | 01 / 电脑开场 | 02 / 纸条展板 |
