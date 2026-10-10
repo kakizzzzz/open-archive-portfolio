@@ -80,6 +80,8 @@ const phase = (t: number, from: number, to: number): number =>
 
 const INTRO_END_SCENE = 0.13;
 const ARCHIVE_REVEAL_END_SCENE = 0.16;
+// Seek inside the fully revealed hold so scroll-position rounding cannot leave it inert.
+const ARCHIVE_READY_SCENE = 0.17;
 
 /** The incoming archive starts only after the computer has fully left. */
 export function sampleOpeningLayers(sceneProgress: number, reducedMotion = false) {
@@ -205,8 +207,8 @@ export function sampleTimeline(t: number, compact = false, galleryCount = 1): Ti
 export function progressForModule(id: ModuleId, count = 1): number {
   if (id === 'works') return progressForCameraStop(GALLERY_START_SCENE, count);
   // The entrance and chapter-one buttons must finish the archive reveal,
-  // rather than stopping at the frame where both visual layers are transparent.
-  if (id === 'about') return progressForCameraStop(ARCHIVE_REVEAL_END_SCENE, count);
+  // and leave a margin for browser scroll-position rounding.
+  if (id === 'about') return progressForCameraStop(ARCHIVE_READY_SCENE, count);
   const baseProgress = TIMELINE_STOPS.find(point => point.activeModule === id)?.t ?? 0.13;
   return progressForCameraStop(baseProgress, count);
 }
